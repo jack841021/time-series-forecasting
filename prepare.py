@@ -16,9 +16,5 @@ for i in range(series.shape[1] - l_x - l_y + 1):
     x += [series[:, i: i + l_x]]
     y += [series[:, i + l_x: i + l_x + l_y]]
 
-x, y = numpy.array(x), numpy.array(y)
-shape = y.shape
-y = numpy.reshape(y, (shape[0], shape[1] * shape[2]))
-
 numpy.save("x.npy", x)
 numpy.save("y.npy", y)

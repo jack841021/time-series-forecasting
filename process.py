@@ -18,7 +18,7 @@ for chart in charts:
         prices = chart["chart"]["result"][0]["indicators"]["quote"][0]["close"]
         for i in range(len(stamps)):
             date = arrow.Arrow.fromtimestamp(stamps[i]).replace(tzinfo="CST").to("Asia/Taipei").format("YYYY-MM-DD")
-            if date in serie and prices[i] != None:
+            if date in serie and isinstance(prices[i], float):
                 serie[date] = prices[i]
         prices = list(serie.values())
         if prices[0] == 0:
