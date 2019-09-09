@@ -1,16 +1,24 @@
 import json
 import numpy
 
-l_t, l_p = 7 * 4, 7 * 1
+l_x, l_y = 7 * 4, 7 * 1
 
 with open("saved_series.json", "r") as saved_series:
     series = json.load(saved_series)
+
 series = numpy.array([serie[1] for serie in series], dtype="float32")
+maxima = numpy.max(series)
+series = series / maxima
+print(maxima)
 
-xs, ys = [], []
-for i in range(len(series[0]) - l_t - l_p + 1):
-    xs += [series[:, i : i + l_t]]
-    ys += [series[:, i + l_t : i + l_t + l_p]]
+x, y = [], []
+for i in range(series.shape[1] - l_x - l_y + 1):
+    x += [series[:, i: i + l_x]]
+    y += [series[:, i + l_x: i + l_x + l_y]]
 
-numpy.save("xs", xs)
-numpy.save("ys", ys)
+x, y = numpy.array(x), numpy.array(y)
+shape = y.shape
+y = numpy.reshape(y, (shape[0], shape[1] * shape[2]))
+
+numpy.save("x.npy", x)
+numpy.save("y.npy", y)
