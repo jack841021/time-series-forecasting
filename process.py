@@ -1,5 +1,6 @@
 import json
 import arrow
+import traceback
 
 n_days = 365
 n_series = 256
@@ -7,17 +8,17 @@ n_series = 256
 with open("saved_charts.json", "r") as saved_charts:
     charts = json.load(saved_charts)
 
-now = arrow.now("Asia/Taipei")
-template = {now.shift(days=-i).format("YYYY-MM-DD"): 0 for i in range(n_days, 0, -1)}
+then = arrow.now("+08:00").shift(days=-n_days)
+template = {then.shift(days=i).format("YYYY-MM-DD"): 0 for i in range(n_days)}
 
 series = {}
 for chart in charts:
-    try:
+    if chart["chart"]["result"][0]["meta"]["firstTradeDate"] < then.timestamp:
         stamps = chart["chart"]["result"][0]["timestamp"]
         serie = template.copy()
         prices = chart["chart"]["result"][0]["indicators"]["quote"][0]["close"]
         for i in range(len(stamps)):
-            date = arrow.Arrow.fromtimestamp(stamps[i]).replace(tzinfo="CST").to("Asia/Taipei").format("YYYY-MM-DD")
+            date = arrow.Arrow.fromtimestamp(stamps[i]).replace(tzinfo="-08:00").to("+08:00").format("YYYY-MM-DD")
             if date in serie and isinstance(prices[i], float):
                 serie[date] = prices[i]
         prices = list(serie.values())
@@ -30,11 +31,9 @@ for chart in charts:
             if prices[i] == 0:
                 prices[i] = prices[i - 1]
         series[chart["chart"]["result"][0]["meta"]["symbol"][:4]] = prices
-    except:
-        print(chart)
 
 series = sorted(series.items(), key=lambda x: sum(x[1]), reverse=True)[:n_series]
-print(sum(series[-1][1]) / n_days)
+print(series[-1])
 
 with open("saved_series.json", "w") as saved_series:
     json.dump(series, saved_series)
