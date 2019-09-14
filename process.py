@@ -1,7 +1,7 @@
 import json
 import numpy
 
-last_min = 20
+curr_min = 20
 lx, ly = 7 * 4, 7 * 1
 
 with open("saved_charts.json", "r") as saved_charts:
@@ -18,7 +18,7 @@ for chart in charts:
     for i in range(len(prices)):
         if prices[i] == None:
             prices[i] = prices[i - 1]
-    if prices[-1] >= last_min:
+    if prices[-1] >= curr_min:
         for i in range(len(prices) - lx - ly + 1):
             x += [prices[i: i + lx]]
             y += [prices[i + lx: i + lx + ly]]
