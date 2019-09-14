@@ -1,7 +1,7 @@
 import json
 import numpy
 
-curr_min = 20
+curr_min = 0
 lx, ly = 7 * 4, 7 * 1
 
 with open("saved_charts.json", "r") as saved_charts:
